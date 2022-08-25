@@ -5,7 +5,7 @@ const { ccclass, property } = _decorator
 enum LightBulbColor {
   GREEN,
   RED,
-  PURPLE,
+  BLUE,
 }
 
 interface ILightBulb {
@@ -26,6 +26,8 @@ export class MainSceneManager extends Component {
   private _innerLightBulbCircleRadius: number = 185
   private _outerLightBulbCircle: ILightBulb[] = []
   private _outerLightBulbCircleRadius: number = 205
+  private _cycleTimer: number = 0
+  private _activeLightBulb: number = 0
 
   onLoad() {
     for (let i = 0; i < this._lightBulbQuantity; i += 1) {
@@ -51,31 +53,64 @@ export class MainSceneManager extends Component {
     for (let i = 1; i <= 5; i += 1) {
       for (let j = 0; j < 5; j += 1) {
         const index = Math.trunc((this._lightBulbQuantity * i) / 5) - 1 - j
-        this._innerLightBulbCircle[index].node.getChildByName('Background').getComponent(Sprite).color = new math.Color(
-          127,
-          0,
-          0,
-          255
-        )
-        this._innerLightBulbCircle[index].node
-          .getChildByName('InnerLight')
-          .getChildByName('Background')
-          .getComponent(Sprite).color = new math.Color(255, 0, 0, 255)
-        this._innerLightBulbCircle[i].color = LightBulbColor.RED
-        this._outerLightBulbCircle[index].node.getChildByName('Background').getComponent(Sprite).color = new math.Color(
-          127,
-          0,
-          0,
-          255
-        )
-        this._outerLightBulbCircle[index].node
-          .getChildByName('InnerLight')
-          .getChildByName('Background')
-          .getComponent(Sprite).color = new math.Color(255, 0, 0, 255)
-        this._innerLightBulbCircle[i].color = LightBulbColor.RED
+
+        this._setLightBulbColor(this._innerLightBulbCircle[index].node, LightBulbColor.RED)
+        this._setLightBulbColor(this._outerLightBulbCircle[index].node, LightBulbColor.RED)
+        this._innerLightBulbCircle[index].color = LightBulbColor.RED
+        this._outerLightBulbCircle[index].color = LightBulbColor.RED
       }
     }
   }
 
-  // update(deltaTime: number) {}
+  update(deltaTime: number) {
+    this._cycleTimer += deltaTime
+    if (this._cycleTimer >= 0.025) {
+      this._cycleTimer = 0
+
+      if (this._activeLightBulb > 0) {
+        if (this._innerLightBulbCircle[this._activeLightBulb - 1].color === LightBulbColor.GREEN) {
+          this._setLightBulbColor(this._innerLightBulbCircle[this._activeLightBulb - 1].node, LightBulbColor.GREEN)
+          this._setLightBulbColor(this._outerLightBulbCircle[this._activeLightBulb - 1].node, LightBulbColor.GREEN)
+        } else if (this._innerLightBulbCircle[this._activeLightBulb - 1].color === LightBulbColor.RED) {
+          this._setLightBulbColor(this._innerLightBulbCircle[this._activeLightBulb - 1].node, LightBulbColor.RED)
+          this._setLightBulbColor(this._outerLightBulbCircle[this._activeLightBulb - 1].node, LightBulbColor.RED)
+        }
+      } else if (this._activeLightBulb === 0) {
+        if (this._innerLightBulbCircle[this._lightBulbQuantity - 1].color === LightBulbColor.GREEN) {
+          this._setLightBulbColor(this._innerLightBulbCircle[this._lightBulbQuantity - 1].node, LightBulbColor.GREEN)
+          this._setLightBulbColor(this._outerLightBulbCircle[this._lightBulbQuantity - 1].node, LightBulbColor.GREEN)
+        } else if (this._innerLightBulbCircle[this._lightBulbQuantity - 1].color === LightBulbColor.RED) {
+          this._setLightBulbColor(this._innerLightBulbCircle[this._lightBulbQuantity - 1].node, LightBulbColor.RED)
+          this._setLightBulbColor(this._outerLightBulbCircle[this._lightBulbQuantity - 1].node, LightBulbColor.RED)
+        }
+      }
+
+      this._setLightBulbColor(this._innerLightBulbCircle[this._activeLightBulb].node, LightBulbColor.BLUE)
+      this._setLightBulbColor(this._outerLightBulbCircle[this._activeLightBulb].node, LightBulbColor.BLUE)
+
+      this._activeLightBulb += 1
+      if (this._activeLightBulb > 59) {
+        this._activeLightBulb = 0
+      }
+    }
+  }
+
+  private _setLightBulbColor(lightBulbNode: Node, color: LightBulbColor) {
+    if (color === LightBulbColor.GREEN) {
+      lightBulbNode.getChildByName('BrightLight').active = false
+      lightBulbNode.getChildByName('Background').getComponent(Sprite).color = new math.Color(0, 127, 0, 255)
+      lightBulbNode.getChildByName('InnerLight').getChildByName('Background').getComponent(Sprite).color =
+        new math.Color(0, 255, 0, 255)
+    } else if (color === LightBulbColor.RED) {
+      lightBulbNode.getChildByName('BrightLight').active = false
+      lightBulbNode.getChildByName('Background').getComponent(Sprite).color = new math.Color(127, 0, 0, 255)
+      lightBulbNode.getChildByName('InnerLight').getChildByName('Background').getComponent(Sprite).color =
+        new math.Color(255, 0, 0, 255)
+    } else if (color === LightBulbColor.BLUE) {
+      lightBulbNode.getChildByName('BrightLight').active = true
+      lightBulbNode.getChildByName('Background').getComponent(Sprite).color = new math.Color(179, 179, 255, 255)
+      lightBulbNode.getChildByName('InnerLight').getChildByName('Background').getComponent(Sprite).color =
+        new math.Color(230, 230, 255, 255)
+    }
+  }
 }
