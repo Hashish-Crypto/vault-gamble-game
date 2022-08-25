@@ -100,12 +100,12 @@ export class MainSceneManager extends Component {
       lightBulbNode.getChildByName('BrightLight').active = false
       lightBulbNode.getChildByName('Background').getComponent(Sprite).color = new math.Color(0, 127, 0, 255)
       lightBulbNode.getChildByName('InnerLight').getChildByName('Background').getComponent(Sprite).color =
-        new math.Color(0, 255, 0, 255)
+        new math.Color(0, 191, 0, 255)
     } else if (color === LightBulbColor.RED) {
       lightBulbNode.getChildByName('BrightLight').active = false
       lightBulbNode.getChildByName('Background').getComponent(Sprite).color = new math.Color(127, 0, 0, 255)
       lightBulbNode.getChildByName('InnerLight').getChildByName('Background').getComponent(Sprite).color =
-        new math.Color(255, 0, 0, 255)
+        new math.Color(191, 0, 0, 255)
     } else if (color === LightBulbColor.BLUE) {
       lightBulbNode.getChildByName('BrightLight').active = true
       lightBulbNode.getChildByName('Background').getComponent(Sprite).color = new math.Color(179, 179, 255, 255)
