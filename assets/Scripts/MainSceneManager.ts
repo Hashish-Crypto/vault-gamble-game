@@ -21,6 +21,9 @@ export class MainSceneManager extends Component {
   @property({ type: Prefab })
   private lightBulbPrefab: Prefab | null = null
 
+  @property({ type: Node })
+  private canvasNode: Node | null = null
+
   private _lightBulbQuantity: number = 60
   private _innerLightBulbCircle: ILightBulb[] = []
   private _innerLightBulbCircleRadius: number = 185
@@ -28,6 +31,8 @@ export class MainSceneManager extends Component {
   private _outerLightBulbCircleRadius: number = 205
   private _cycleTimer: number = 0
   private _activeLightBulb: number = 0
+  private _isClockwise: boolean = true
+  private _round: number = 5
 
   onLoad() {
     for (let i = 0; i < this._lightBulbQuantity; i += 1) {
@@ -50,16 +55,9 @@ export class MainSceneManager extends Component {
       this.lightBulbRef.addChild(this._outerLightBulbCircle[i].node)
     }
 
-    for (let i = 1; i <= 5; i += 1) {
-      for (let j = 0; j < 5; j += 1) {
-        const index = Math.trunc((this._lightBulbQuantity * i) / 5) - 1 - j
+    this._setGameRound()
 
-        this._setLightBulbColor(this._innerLightBulbCircle[index].node, LightBulbColor.RED)
-        this._setLightBulbColor(this._outerLightBulbCircle[index].node, LightBulbColor.RED)
-        this._innerLightBulbCircle[index].color = LightBulbColor.RED
-        this._outerLightBulbCircle[index].color = LightBulbColor.RED
-      }
-    }
+    this.canvasNode.on(Node.EventType.TOUCH_START, this._onTouchScreen, this)
   }
 
   update(deltaTime: number) {
@@ -67,50 +65,106 @@ export class MainSceneManager extends Component {
     if (this._cycleTimer >= 0.025) {
       this._cycleTimer = 0
 
-      if (this._activeLightBulb > 0) {
-        if (this._innerLightBulbCircle[this._activeLightBulb - 1].color === LightBulbColor.GREEN) {
-          this._setLightBulbColor(this._innerLightBulbCircle[this._activeLightBulb - 1].node, LightBulbColor.GREEN)
-          this._setLightBulbColor(this._outerLightBulbCircle[this._activeLightBulb - 1].node, LightBulbColor.GREEN)
-        } else if (this._innerLightBulbCircle[this._activeLightBulb - 1].color === LightBulbColor.RED) {
-          this._setLightBulbColor(this._innerLightBulbCircle[this._activeLightBulb - 1].node, LightBulbColor.RED)
-          this._setLightBulbColor(this._outerLightBulbCircle[this._activeLightBulb - 1].node, LightBulbColor.RED)
+      if (this._isClockwise) {
+        if (this._activeLightBulb > 0) {
+          if (this._innerLightBulbCircle[this._activeLightBulb - 1].color === LightBulbColor.GREEN) {
+            this._setLightBulbColor(this._innerLightBulbCircle[this._activeLightBulb - 1], LightBulbColor.GREEN)
+            this._setLightBulbColor(this._outerLightBulbCircle[this._activeLightBulb - 1], LightBulbColor.GREEN)
+          } else if (this._innerLightBulbCircle[this._activeLightBulb - 1].color === LightBulbColor.RED) {
+            this._setLightBulbColor(this._innerLightBulbCircle[this._activeLightBulb - 1], LightBulbColor.RED)
+            this._setLightBulbColor(this._outerLightBulbCircle[this._activeLightBulb - 1], LightBulbColor.RED)
+          }
+        } else if (this._activeLightBulb === 0) {
+          if (this._innerLightBulbCircle[this._lightBulbQuantity - 1].color === LightBulbColor.GREEN) {
+            this._setLightBulbColor(this._innerLightBulbCircle[this._lightBulbQuantity - 1], LightBulbColor.GREEN)
+            this._setLightBulbColor(this._outerLightBulbCircle[this._lightBulbQuantity - 1], LightBulbColor.GREEN)
+          } else if (this._innerLightBulbCircle[this._lightBulbQuantity - 1].color === LightBulbColor.RED) {
+            this._setLightBulbColor(this._innerLightBulbCircle[this._lightBulbQuantity - 1], LightBulbColor.RED)
+            this._setLightBulbColor(this._outerLightBulbCircle[this._lightBulbQuantity - 1], LightBulbColor.RED)
+          }
         }
-      } else if (this._activeLightBulb === 0) {
-        if (this._innerLightBulbCircle[this._lightBulbQuantity - 1].color === LightBulbColor.GREEN) {
-          this._setLightBulbColor(this._innerLightBulbCircle[this._lightBulbQuantity - 1].node, LightBulbColor.GREEN)
-          this._setLightBulbColor(this._outerLightBulbCircle[this._lightBulbQuantity - 1].node, LightBulbColor.GREEN)
-        } else if (this._innerLightBulbCircle[this._lightBulbQuantity - 1].color === LightBulbColor.RED) {
-          this._setLightBulbColor(this._innerLightBulbCircle[this._lightBulbQuantity - 1].node, LightBulbColor.RED)
-          this._setLightBulbColor(this._outerLightBulbCircle[this._lightBulbQuantity - 1].node, LightBulbColor.RED)
+
+        this._setLightBulbColor(this._innerLightBulbCircle[this._activeLightBulb], LightBulbColor.BLUE)
+        this._setLightBulbColor(this._outerLightBulbCircle[this._activeLightBulb], LightBulbColor.BLUE)
+
+        this._activeLightBulb += 1
+        if (this._activeLightBulb > 59) {
+          this._activeLightBulb = 0
         }
-      }
+      } else if (!this._isClockwise) {
+        if (this._activeLightBulb < 59) {
+          if (this._innerLightBulbCircle[this._activeLightBulb + 1].color === LightBulbColor.GREEN) {
+            this._setLightBulbColor(this._innerLightBulbCircle[this._activeLightBulb + 1], LightBulbColor.GREEN)
+            this._setLightBulbColor(this._outerLightBulbCircle[this._activeLightBulb + 1], LightBulbColor.GREEN)
+          } else if (this._innerLightBulbCircle[this._activeLightBulb + 1].color === LightBulbColor.RED) {
+            this._setLightBulbColor(this._innerLightBulbCircle[this._activeLightBulb + 1], LightBulbColor.RED)
+            this._setLightBulbColor(this._outerLightBulbCircle[this._activeLightBulb + 1], LightBulbColor.RED)
+          }
+        } else if (this._activeLightBulb === 59) {
+          if (this._innerLightBulbCircle[0].color === LightBulbColor.GREEN) {
+            this._setLightBulbColor(this._innerLightBulbCircle[0], LightBulbColor.GREEN)
+            this._setLightBulbColor(this._outerLightBulbCircle[0], LightBulbColor.GREEN)
+          } else if (this._innerLightBulbCircle[0].color === LightBulbColor.RED) {
+            this._setLightBulbColor(this._innerLightBulbCircle[0], LightBulbColor.RED)
+            this._setLightBulbColor(this._outerLightBulbCircle[0], LightBulbColor.RED)
+          }
+        }
 
-      this._setLightBulbColor(this._innerLightBulbCircle[this._activeLightBulb].node, LightBulbColor.BLUE)
-      this._setLightBulbColor(this._outerLightBulbCircle[this._activeLightBulb].node, LightBulbColor.BLUE)
+        this._setLightBulbColor(this._innerLightBulbCircle[this._activeLightBulb], LightBulbColor.BLUE)
+        this._setLightBulbColor(this._outerLightBulbCircle[this._activeLightBulb], LightBulbColor.BLUE)
 
-      this._activeLightBulb += 1
-      if (this._activeLightBulb > 59) {
-        this._activeLightBulb = 0
+        this._activeLightBulb -= 1
+        if (this._activeLightBulb < 0) {
+          this._activeLightBulb = 59
+        }
       }
     }
   }
 
-  private _setLightBulbColor(lightBulbNode: Node, color: LightBulbColor) {
+  private _setLightBulbColor(lightBulb: ILightBulb, color: LightBulbColor) {
     if (color === LightBulbColor.GREEN) {
-      lightBulbNode.getChildByName('BrightLight').active = false
-      lightBulbNode.getChildByName('Background').getComponent(Sprite).color = new math.Color(0, 127, 0, 255)
-      lightBulbNode.getChildByName('InnerLight').getChildByName('Background').getComponent(Sprite).color =
+      lightBulb.node.getChildByName('BrightLight').active = false
+      lightBulb.node.getChildByName('Background').getComponent(Sprite).color = new math.Color(0, 127, 0, 255)
+      lightBulb.node.getChildByName('InnerLight').getChildByName('Background').getComponent(Sprite).color =
         new math.Color(0, 191, 0, 255)
+      lightBulb.color = LightBulbColor.GREEN
     } else if (color === LightBulbColor.RED) {
-      lightBulbNode.getChildByName('BrightLight').active = false
-      lightBulbNode.getChildByName('Background').getComponent(Sprite).color = new math.Color(127, 0, 0, 255)
-      lightBulbNode.getChildByName('InnerLight').getChildByName('Background').getComponent(Sprite).color =
+      lightBulb.node.getChildByName('BrightLight').active = false
+      lightBulb.node.getChildByName('Background').getComponent(Sprite).color = new math.Color(127, 0, 0, 255)
+      lightBulb.node.getChildByName('InnerLight').getChildByName('Background').getComponent(Sprite).color =
         new math.Color(191, 0, 0, 255)
+      lightBulb.color = LightBulbColor.RED
     } else if (color === LightBulbColor.BLUE) {
-      lightBulbNode.getChildByName('BrightLight').active = true
-      lightBulbNode.getChildByName('Background').getComponent(Sprite).color = new math.Color(179, 179, 255, 255)
-      lightBulbNode.getChildByName('InnerLight').getChildByName('Background').getComponent(Sprite).color =
+      lightBulb.node.getChildByName('BrightLight').active = true
+      lightBulb.node.getChildByName('Background').getComponent(Sprite).color = new math.Color(179, 179, 255, 255)
+      lightBulb.node.getChildByName('InnerLight').getChildByName('Background').getComponent(Sprite).color =
         new math.Color(230, 230, 255, 255)
     }
+  }
+
+  private _setGameRound() {
+    for (let i = 0; i < this._lightBulbQuantity; i += 1) {
+      this._setLightBulbColor(this._innerLightBulbCircle[i], LightBulbColor.GREEN)
+      this._setLightBulbColor(this._outerLightBulbCircle[i], LightBulbColor.GREEN)
+    }
+
+    for (let i = 1; i <= this._round; i += 1) {
+      for (let j = 0; j < this._round; j += 1) {
+        const index = Math.trunc((this._lightBulbQuantity * i) / this._round) - 1 - j
+
+        this._setLightBulbColor(this._innerLightBulbCircle[index], LightBulbColor.RED)
+        this._setLightBulbColor(this._outerLightBulbCircle[index], LightBulbColor.RED)
+      }
+    }
+
+    this._round -= 1
+  }
+
+  private _onTouchScreen() {
+    if (this._innerLightBulbCircle[this._activeLightBulb].color === LightBulbColor.RED) {
+      this._setGameRound()
+    }
+
+    this._isClockwise = !this._isClockwise
   }
 }
