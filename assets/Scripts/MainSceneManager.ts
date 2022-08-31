@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Prefab, instantiate, Sprite, math, find } from 'cc'
+import { _decorator, Component, Node, Prefab, instantiate, Sprite, math, find, director, Label } from 'cc'
 import { PersistentNode } from './PersistentNode'
 
 const { ccclass, property } = _decorator
@@ -25,6 +25,9 @@ export class MainSceneManager extends Component {
   @property({ type: Node })
   private canvasNode: Node | null = null
 
+  @property({ type: Label })
+  public prizeLabel: Label | null = null
+
   private _lightBulbQuantity: number = 60
   private _innerLightBulbCircle: ILightBulb[] = []
   private _innerLightBulbCircleRadius: number = 185
@@ -38,6 +41,8 @@ export class MainSceneManager extends Component {
 
   onLoad() {
     this._persistentNode = find('PersistentNode').getComponent(PersistentNode)
+
+    this._setPrize()
 
     for (let i = 0; i < this._lightBulbQuantity; i += 1) {
       this._innerLightBulbCircle[i] = {
@@ -66,7 +71,7 @@ export class MainSceneManager extends Component {
 
   update(deltaTime: number) {
     this._cycleTimer += deltaTime
-    if (this._cycleTimer >= 0.028 / this._persistentNode.speed) {
+    if (this._cycleTimer >= 0.03 / this._persistentNode.speed) {
       this._cycleTimer = 0
 
       if (this._isClockwise) {
@@ -162,13 +167,24 @@ export class MainSceneManager extends Component {
     }
 
     this._round -= 1
+    if (this._round === -1) {
+      this._persistentNode.balance += this._persistentNode.prize
+      director.loadScene('Menu')
+    }
   }
 
   private _onTouchScreen() {
     if (this._innerLightBulbCircle[this._activeLightBulb].color === LightBulbColor.RED) {
       this._setGameRound()
+    } else if (this._innerLightBulbCircle[this._activeLightBulb].color === LightBulbColor.GREEN) {
+      this._persistentNode.balance -= this._persistentNode.bet
+      director.loadScene('Menu')
     }
 
     this._isClockwise = !this._isClockwise
+  }
+
+  private _setPrize() {
+    this.prizeLabel.string = 'Prize: HC$' + this._persistentNode.prize.toFixed(2)
   }
 }

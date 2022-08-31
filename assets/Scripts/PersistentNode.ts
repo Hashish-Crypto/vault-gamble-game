@@ -6,7 +6,6 @@ const { ccclass } = _decorator
 export class PersistentNode extends Component {
   public balance: number = 100
   public bet: number | null = null
-  public hit: number | null = null
   public prize: number | null = null
   public speed: number | null = null
   public betMultiplier: number | null = null
