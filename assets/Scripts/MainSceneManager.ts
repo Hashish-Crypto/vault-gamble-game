@@ -1,4 +1,5 @@
-import { _decorator, Component, Node, Prefab, instantiate, Sprite, math } from 'cc'
+import { _decorator, Component, Node, Prefab, instantiate, Sprite, math, find } from 'cc'
+import { PersistentNode } from './PersistentNode'
 
 const { ccclass, property } = _decorator
 
@@ -33,8 +34,11 @@ export class MainSceneManager extends Component {
   private _activeLightBulb: number = 0
   private _isClockwise: boolean = true
   private _round: number = 5
+  private _persistentNode: PersistentNode | null = null
 
   onLoad() {
+    this._persistentNode = find('PersistentNode').getComponent(PersistentNode)
+
     for (let i = 0; i < this._lightBulbQuantity; i += 1) {
       this._innerLightBulbCircle[i] = {
         node: instantiate(this.lightBulbPrefab),
@@ -62,7 +66,7 @@ export class MainSceneManager extends Component {
 
   update(deltaTime: number) {
     this._cycleTimer += deltaTime
-    if (this._cycleTimer >= 0.025) {
+    if (this._cycleTimer >= 0.028 / this._persistentNode.speed) {
       this._cycleTimer = 0
 
       if (this._isClockwise) {

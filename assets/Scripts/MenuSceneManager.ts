@@ -28,8 +28,6 @@ export class MenuSceneManager extends Component {
 
   onLoad() {
     this._persistentNode = find('PersistentNode').getComponent(PersistentNode)
-
-    this._persistentNode.throwRounds = this._persistentNode.throwRoundsMax
     this._setBalance(this._persistentNode.balance)
     this._setBet(0)
 
@@ -38,23 +36,22 @@ export class MenuSceneManager extends Component {
         betToggle.interactable = false
 
         if (betToggle.node.name === 'Toggle1') {
-          this._persistentNode.betTarget = 0.25
-          this._persistentNode.betMultiplier = 1.75
-        } else if (betToggle.node.name === 'Toggle2') {
-          this._persistentNode.betTarget = 0.5
+          this._persistentNode.speed = 1
           this._persistentNode.betMultiplier = 1.5
-        } else if (betToggle.node.name === 'Toggle3') {
-          this._persistentNode.betTarget = 2
+        } else if (betToggle.node.name === 'Toggle2') {
+          this._persistentNode.speed = 1.3
           this._persistentNode.betMultiplier = 2
+        } else if (betToggle.node.name === 'Toggle3') {
+          this._persistentNode.speed = 1.6
+          this._persistentNode.betMultiplier = 2.5
         } else if (betToggle.node.name === 'Toggle4') {
-          this._persistentNode.betTarget = 3
+          this._persistentNode.speed = 2
           this._persistentNode.betMultiplier = 3
         }
       }
     })
 
     this._setBet(this._persistentNode.bet)
-    this._setHit(0)
     this._setPrize(0)
 
     this.betEditBox.node.on(EditBox.EventType.TEXT_CHANGED, this._handleBetChange, this)
@@ -73,16 +70,6 @@ export class MenuSceneManager extends Component {
     this._persistentNode.bet = exactMath.floor(value, -2)
   }
 
-  private _setHit(value: number) {
-    this._persistentNode.hit = exactMath.floor(exactMath.mul(value, this._persistentNode.betTarget), -2)
-
-    if (this._persistentNode.betTarget < 1) {
-      this.hitLabel.string = 'Value to hit less than: HC$' + this._persistentNode.hit.toFixed(2)
-    } else if (this._persistentNode.betTarget > 1) {
-      this.hitLabel.string = 'Value to hit more than: HC$' + this._persistentNode.hit.toFixed(2)
-    }
-  }
-
   private _setPrize(value: number) {
     this._persistentNode.prize = exactMath.floor(
       exactMath.sub(exactMath.mul(value, this._persistentNode.betMultiplier), value),
@@ -96,19 +83,19 @@ export class MenuSceneManager extends Component {
 
     if (betToggle.node.name === 'Toggle1') {
       betToggle.interactable = false
-      this._persistentNode.betTarget = 0.25
-      this._persistentNode.betMultiplier = 1.75
+      this._persistentNode.speed = 1
+      this._persistentNode.betMultiplier = 1.5
     } else if (betToggle.node.name === 'Toggle2') {
       betToggle.interactable = false
-      this._persistentNode.betTarget = 0.5
-      this._persistentNode.betMultiplier = 1.5
+      this._persistentNode.speed = 1.3
+      this._persistentNode.betMultiplier = 2
     } else if (betToggle.node.name === 'Toggle3') {
       betToggle.interactable = false
-      this._persistentNode.betTarget = 2
-      this._persistentNode.betMultiplier = 2
+      this._persistentNode.speed = 1.6
+      this._persistentNode.betMultiplier = 2.5
     } else if (betToggle.node.name === 'Toggle4') {
       betToggle.interactable = false
-      this._persistentNode.betTarget = 3
+      this._persistentNode.speed = 2
       this._persistentNode.betMultiplier = 3
     }
 
@@ -119,13 +106,11 @@ export class MenuSceneManager extends Component {
     })
 
     this._setBet(this._persistentNode.bet)
-    this._setHit(this._persistentNode.bet)
     this._setPrize(this._persistentNode.bet)
   }
 
   private _handleBetChange(editBox: EditBox) {
     this._setBet(Number(editBox.string))
-    this._setHit(this._persistentNode.bet)
     this._setPrize(this._persistentNode.bet)
   }
 

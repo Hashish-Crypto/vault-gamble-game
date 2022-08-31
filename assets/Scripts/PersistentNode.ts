@@ -8,14 +8,10 @@ export class PersistentNode extends Component {
   public bet: number | null = null
   public hit: number | null = null
   public prize: number | null = null
+  public speed: number | null = null
   public betMultiplier: number | null = null
-  public betTarget: number | null = null
-  public throwRoundsMax: number = 6
-  public throwRounds: number | null = null
 
   onLoad() {
     director.addPersistRootNode(this.node)
-
-    this.throwRounds = this.throwRoundsMax
   }
 }

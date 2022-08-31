@@ -35,7 +35,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "PersitentNode",
+    "_name": "PersistentNode",
     "_objFlags": 0,
     "_parent": {
       "__id__": 1
@@ -1116,7 +1116,7 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -350,
+      "x": -360,
       "y": 0,
       "z": 0
     },
@@ -1500,7 +1500,7 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -160,
+      "x": -170,
       "y": 0,
       "z": 0
     },
@@ -1612,7 +1612,7 @@
       "b": 255,
       "a": 255
     },
-    "_string": "2x | 1.5x Speed",
+    "_string": "2x | 1.3x Speed",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -1884,7 +1884,7 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 40,
+      "x": 20,
       "y": 0,
       "z": 0
     },
@@ -1930,7 +1930,7 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 90,
+      "x": 100,
       "y": 0,
       "z": 0
     },
@@ -1967,7 +1967,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 138.62,
+      "width": 155.3,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -1996,7 +1996,7 @@
       "b": 255,
       "a": 255
     },
-    "_string": "2.5x | 2x Speed",
+    "_string": "2.5x | 1.7x Speed",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -2268,7 +2268,7 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 230,
+      "x": 220,
       "y": 0,
       "z": 0
     },
@@ -2314,7 +2314,7 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 90,
+      "x": 85,
       "y": 0,
       "z": 0
     },
@@ -2351,7 +2351,7 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 138.62,
+      "width": 121.94,
       "height": 50.4
     },
     "_anchorPoint": {
@@ -2380,7 +2380,7 @@
       "b": 255,
       "a": 255
     },
-    "_string": "3x | 2.5x Speed",
+    "_string": "3x | 2x Speed",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
