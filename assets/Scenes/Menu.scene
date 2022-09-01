@@ -920,9 +920,9 @@
     "_dstBlendFactor": 4,
     "_color": {
       "__type__": "cc.Color",
-      "r": 187,
-      "g": 187,
-      "b": 187,
+      "r": 208,
+      "g": 208,
+      "b": 208,
       "a": 255
     },
     "_string": "Place bet value here...",
