@@ -1,6 +1,6 @@
 # Vault Gamble Game - Cocos Creator
 
-Vault gamble game clone using [Cocos Creator 3.6.0](https://www.cocos.com/en/creator).
+Vault gamble game using [Cocos Creator 3.6.0](https://www.cocos.com/en/creator).
 
 Live demo: [acquati.itch.io/vault-gamble-game](https://acquati.itch.io/vault-gamble-game)
 
